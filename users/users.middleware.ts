@@ -12,6 +12,21 @@ class UsersMiddleware {
         req.body.id = req.params.userId;
         next();
     }
+
+    async validateUserExists(
+        req: express.Request,
+        res: express.Response,
+        next: express.NextFunction
+    ) {
+        const user = await userService.getById(req.body.id);
+        if (user) {
+            next();
+        } else {
+            res.status(404).send({
+                error: `User ${req.params.userId} not found`,
+            });
+        }
+    }
 }
 
 export default new UsersMiddleware();
